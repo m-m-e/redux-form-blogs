@@ -1,26 +1,36 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import BlogList from './components/BlogList';
+import BlogForm from './components/BlogForm/index';
+import { addBlog } from './redux/actionCreators';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  submit = blogDetails => {
+    console.log(blogDetails);
+
+    const { addBlog, blogs } = this.props;
+    const newId = blogs.length;
+    const newBlog = {...blogDetails, id: newId};
+    addBlog(newBlog);
+  }
+  render() {
+    const { blogs } = this.props;
+    return (
+      <div className="App">
+        <BlogList blogs={blogs}/>
+        <div className="form-container">
+          <BlogForm onSubmit={this.submit}/>
+        </div>
+      </div>
+    );
+  }
 }
 
-export default App;
+const mapStateToProps = (state) => ({
+  blogs: Object.values(state.blogs.blogs)
+});
+
+export default connect(
+  mapStateToProps,
+  { addBlog },
+)(App);
